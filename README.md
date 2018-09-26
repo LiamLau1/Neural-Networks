@@ -1,14 +1,14 @@
-#Neural Networks in C++
+# Neural Networks in C++
 Simple Neural Network written in C++ with a test-net which saves the state of the trained neural net
 
 # first_train_net
 First neural net courtesy to David Miller, http://millermattson.com/dave
 See the associated video for instructions: http://vimeo.com/19569529
 
-#test_net
+# test_net
 Takes the trained weights from first-train-net and uses it
 
-#Usage of the simple net
+# Usage of the simple net
 Make sure to change the topology to match the number of inputs in make-training-samples.
 Also remember to print out extra inputs
 ```
