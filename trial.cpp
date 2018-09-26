@@ -12,31 +12,26 @@ public:
     WeightsData(const string filename);
     bool isEof(void) { return m_WeightsDataFile.eof(); }
     void getTopology(vector<unsigned> &topology);
-
-    // Returns the number of input values read from the file:
-    unsigned getNextWeights(vector<double> &inputVals);
+	fstream& GotoLine(fstream& file, unsigned int num);
+    double getNextWeights(vector<double> &weightVals);
     //unsigned getTargetOutputs(vector<double> &targetOutputVals);
 
 private:
-    ifstream m_WeightsDataFile;
+    fstream m_WeightsDataFile;
 };
 
 void WeightsData::getTopology(vector<unsigned> &topology)
 {
     string line;
-    string label;
 
     getline(m_WeightsDataFile, line);
     stringstream ss(line);
-    ss >> label;
-	unsigned n;
-	ss >> n;
-	topology.push_back(n);
-    /*while (!ss.eof()) {
+    while (!ss.eof()) {
         unsigned n;
         ss >> n;
         topology.push_back(n);
-    }*/
+		//fill the topology vector with the number of neurons per layer written in weights.txt
+    }
 
     return;
 }
@@ -47,47 +42,27 @@ WeightsData::WeightsData(const string filename)
     m_WeightsDataFile.open(filename.c_str());
 }
 
-unsigned WeightsData::getNextWeights(vector<double> &weightVals)
+
+double WeightsData::getNextWeights(vector<double> &weightVals)
 {
-    weightVals.clear();
-
+	//countLines(m_WeightsDataFile);
+	weightVals.clear();
     string line;
-    getline(m_WeightsDataFile, line);
-    stringstream ss(line);
-
-    string label;
-    ss>> label;
-    if (label.compare("in:") == 0) {
+	GotoLine(m_WeightsDataFile, 2);
+    while (!m_WeightsDataFile.eof()) {
+        getline(m_WeightsDataFile,line);
         double oneValue;
-        while (ss >> oneValue) {
-            weightVals.push_back(oneValue);
-        }
+        stringstream ss(line);
+        ss >> oneValue;
+        weightVals.push_back(oneValue);
     }
+    weightVals.pop_back(); //remove the repeated element
+
 
     return weightVals.size();
 }
 
-int main(){
-	fstream& GotoLine(fstream& file, unsigned int num);
-	WeightsData WData("/tmp/WeightsData.txt");
-	vector<unsigned> topology;
-	WData.getTopology(topology);
-	if(topology[0] != 2){
-		cout << topology[1];
-	}
-	/*string line9;
-	string weight;
-	GotoLine(m_WeightsDataFile,9);
-	getline(m_WeightsDataFile, line9);
-	stringstream ss(line9);
-	ss >> weight;
-	cout << weight <<endl;
-	*/
-	return 0;
-}
-
-
-fstream& GotoLine(fstream& file, unsigned int num)
+fstream& WeightsData::GotoLine(fstream& file, unsigned int num)
 {
     file.seekg(ios::beg);
     for(unsigned int i=0; i < num - 1; ++i)
@@ -95,4 +70,13 @@ fstream& GotoLine(fstream& file, unsigned int num)
         file.ignore(numeric_limits<streamsize>::max(),'\n');
     }
     return file;
+}
+
+int main(){
+	WeightsData WData("/tmp/weights.txt");
+	vector<unsigned> topology;
+	vector<double> weights;
+	WData.getTopology(topology);
+	WData.getNextWeights(weights);
+	return 0;
 }

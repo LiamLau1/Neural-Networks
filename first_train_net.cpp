@@ -222,7 +222,7 @@ Neuron::Neuron(unsigned numOutputs, unsigned myIndex)
         m_outputWeights.back().weight = randomWeight();
         //cout << "Connection "; /*for debug purposes
     }
-
+    //cout << m_outputWeights.size() <<endl;
     m_myIndex = myIndex;
 }
 
@@ -371,6 +371,7 @@ void showVectorVals(string label, vector<double> &v)
 void Net::saveNet(const vector<unsigned> &topology)
 {
     fstream file;
+    remove("/tmp/weights.txt"); //removes file so it doesnt append on
     file.open("/tmp/weights.txt", ios_base::app);
     unsigned numLayers = topology.size();
     for (unsigned layerNum = 0; layerNum < numLayers; ++layerNum) {
@@ -388,17 +389,6 @@ void Net::saveNet(const vector<unsigned> &topology)
         }
     }
 
-/*
-    unsigned numLayers = topology.size();
-    for (unsigned layerNum = 0; layerNum < numLayers; ++layerNum) {
-        unsigned numOutputs = layerNum == topology.size() - 1 ? 0 : topology[layerNum + 1];
-        Layer &prevLayer = m_layers[layerNum - 1];
-        // We have a new layer, now fill it with neurons, and
-        // add a bias neuron in each layer.
-        for (unsigned neuronNum = 0; neuronNum <= topology[layerNum]; ++neuronNum) {
-            cout << prevLayer[neuronNum].saveNeuron(numOutputs) << endl;
-        }
-        */
 }
 
 
